@@ -1,0 +1,9 @@
+/home/user/Lab03/build/Desktop-Release/CMakeFiles/Lab03.dir
+/home/user/Lab03/build/Desktop-Release/CMakeFiles/edit_cache.dir
+/home/user/Lab03/build/Desktop-Release/CMakeFiles/rebuild_cache.dir
+/home/user/Lab03/build/Desktop-Release/CMakeFiles/list_install_components.dir
+/home/user/Lab03/build/Desktop-Release/CMakeFiles/install.dir
+/home/user/Lab03/build/Desktop-Release/CMakeFiles/install/local.dir
+/home/user/Lab03/build/Desktop-Release/CMakeFiles/install/strip.dir
+/home/user/Lab03/build/Desktop-Release/CMakeFiles/Lab03_autogen_timestamp_deps.dir
+/home/user/Lab03/build/Desktop-Release/CMakeFiles/Lab03_autogen.dir

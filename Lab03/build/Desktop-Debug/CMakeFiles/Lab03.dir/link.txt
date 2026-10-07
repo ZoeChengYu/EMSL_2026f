@@ -1,0 +1,1 @@
+/usr/bin/g++ -DQT_QML_DEBUG -g CMakeFiles/Lab03.dir/Lab03_autogen/mocs_compilation.cpp.o CMakeFiles/Lab03.dir/main.cpp.o CMakeFiles/Lab03.dir/mainwindow.cpp.o CMakeFiles/Lab03.dir/Lab03_autogen/EWIEGA46WW/qrc_file.cpp.o -o Lab03  /usr/lib/x86_64-linux-gnu/libQt5Widgets.so.5.15.13 /usr/lib/x86_64-linux-gnu/libQt5Gui.so.5.15.13 /usr/lib/x86_64-linux-gnu/libQt5Core.so.5.15.13 

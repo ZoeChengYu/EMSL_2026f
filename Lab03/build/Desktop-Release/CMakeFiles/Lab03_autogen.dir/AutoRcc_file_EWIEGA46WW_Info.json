@@ -1,0 +1,24 @@
+{
+	"BUILD_DIR" : "/home/user/Lab03/build/Desktop-Release/Lab03_autogen",
+	"CMAKE_BINARY_DIR" : "/home/user/Lab03/build/Desktop-Release",
+	"CMAKE_CURRENT_BINARY_DIR" : "/home/user/Lab03/build/Desktop-Release",
+	"CMAKE_CURRENT_SOURCE_DIR" : "/home/user/Lab03",
+	"CMAKE_SOURCE_DIR" : "/home/user/Lab03",
+	"GENERATOR" : "Unix Makefiles",
+	"INCLUDE_DIR" : "/home/user/Lab03/build/Desktop-Release/Lab03_autogen/include",
+	"INPUTS" : 
+	[
+		"/home/user/Lab03/Lit_Redstone_Lamp_JE2_BE1.png",
+		"/home/user/Lab03/Redstone_Lamp_JE3_BE2.png"
+	],
+	"LOCK_FILE" : "/home/user/Lab03/build/Desktop-Release/CMakeFiles/Lab03_autogen.dir/AutoRcc_file_EWIEGA46WW_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "-name", "file" ],
+	"OUTPUT_CHECKSUM" : "EWIEGA46WW",
+	"OUTPUT_NAME" : "qrc_file.cpp",
+	"RCC_EXECUTABLE" : "/usr/lib/qt5/bin/rcc",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "/home/user/Lab03/build/Desktop-Release/CMakeFiles/Lab03_autogen.dir/AutoRcc_file_EWIEGA46WW_Used.txt",
+	"SOURCE" : "/home/user/Lab03/file.qrc",
+	"VERBOSITY" : 0
+}
