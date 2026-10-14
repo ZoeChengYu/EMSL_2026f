@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>Lit_Redstone_Lamp_JE2_BE1.png</file>
+        <file>Redstone_Lamp_JE3_BE2.png</file>
+    </qresource>
+</RCC>
