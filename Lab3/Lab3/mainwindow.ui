@@ -27,7 +27,7 @@
      <string>S</string>
     </property>
     <property name="text">
-     <string>LED shining</string>
+     <string>LED Shining</string>
     </property>
    </widget>
    <widget class="QLabel" name="ledLabel0">
@@ -62,7 +62,7 @@
      <string>1</string>
     </property>
     <property name="text">
-     <string>LED 0</string>
+     <string>LED1</string>
     </property>
    </widget>
    <widget class="QSlider" name="speedSlider">
@@ -100,7 +100,7 @@
      <string>O</string>
     </property>
     <property name="text">
-     <string>switching on</string>
+     <string>Switching on</string>
     </property>
    </widget>
    <widget class="QPushButton" name="switchingOffBtn">
@@ -116,7 +116,7 @@
      <string>F</string>
     </property>
     <property name="text">
-     <string>switching off</string>
+     <string>Switching off</string>
     </property>
    </widget>
    <widget class="QPushButton" name="runningOnBtn">
@@ -132,7 +132,26 @@
      <string>R</string>
     </property>
     <property name="text">
-     <string>running light on</string>
+     <string>Running Light on</string>
+    </property>
+   </widget>
+      <widget class="QLabel" name="speedLabel">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>280</y>
+      <width>200</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Switching Speed</string>
     </property>
    </widget>
    <widget class="QProgressBar" name="speedProgress">
@@ -182,6 +201,15 @@
       <height>61</height>
      </rect>
     </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+    <property name="maximum">
+     <number>999</number>
+    </property>
+    <property name="value">
+     <number>5</number>
+    </property>
    </widget>
    <widget class="QPushButton" name="runningOffBtn">
     <property name="geometry">
@@ -196,7 +224,7 @@
      <string>X</string>
     </property>
     <property name="text">
-     <string>running light off</string>
+     <string>Running Light off</string>
     </property>
    </widget>
    <widget class="QPushButton" name="changeDirBtn">
@@ -212,7 +240,7 @@
      <string>D</string>
     </property>
     <property name="text">
-     <string>change direction</string>
+     <string>Change Direction</string>
     </property>
    </widget>
    <widget class="QLabel" name="ledLabel1">
@@ -285,7 +313,7 @@
      <string>2</string>
     </property>
     <property name="text">
-     <string>LED 1</string>
+     <string>LED2</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="ledCheck2">
@@ -301,7 +329,7 @@
      <string>3</string>
     </property>
     <property name="text">
-     <string>LED 2</string>
+     <string>LED3</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="ledCheck3">
@@ -317,7 +345,7 @@
      <string>4</string>
     </property>
     <property name="text">
-     <string>LED 3</string>
+     <string>LED4</string>
     </property>
    </widget>
   </widget>

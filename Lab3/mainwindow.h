@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QKeyEvent>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -50,6 +51,9 @@ private slots:
     void on_speedSlider_valueChanged(int value);
 
     void on_speedSpinBox_valueChanged(int value);
+
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     Ui::MainWindow *ui;

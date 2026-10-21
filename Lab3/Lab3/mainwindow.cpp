@@ -119,12 +119,11 @@ void MainWindow::SyncCheckboxes() {
 
 void MainWindow::UpdateLights() {
     static const QPixmap litPixmap(":/new/prefix1/Lit_Redstone_Lamp_JE2_BE1.png");
-    static const QPixmap unlitPixmap(":/new/prefix1/Redstone_Lamp_JE3_BE2.png");
 
     QLabel* labels[4] = {ui->ledLabel0, ui->ledLabel1, ui->ledLabel2, ui->ledLabel3};
     for (int i = 0; i < 4; ++i) {
-        labels[i]->setPixmap(lights[i] ? litPixmap : unlitPixmap);
-        labels[i]->setHidden(false);
+        labels[i]->setPixmap(litPixmap);
+        labels[i]->setVisible(lights[i]);
         setGpio(i, lights[i] ? 1 : 0);
     }
 }
@@ -268,5 +267,21 @@ void MainWindow::on_speedSpinBox_valueChanged(int value)
     Q_UNUSED(value);
     if (timer->isActive()) {
         timer->setInterval(GetDelay());
+    }
+}
+
+// 支援鍵盤快捷鍵調整 Switching Speed (例如: +, -, Up, Down, W, Q 等按鍵)
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Plus || event->key() == Qt::Key_Equal || event->key() == Qt::Key_Up) {
+        ui->speedSlider->setValue(qMin(100, ui->speedSlider->value() + 5));
+    } else if (event->key() == Qt::Key_Minus || event->key() == Qt::Key_Underscore || event->key() == Qt::Key_Down) {
+        ui->speedSlider->setValue(qMax(1, ui->speedSlider->value() - 5));
+    } else if (event->key() == Qt::Key_W) {
+        ui->speedSlider->setValue(qMin(100, ui->speedSlider->value() + 5));
+    } else if (event->key() == Qt::Key_Q) {
+        ui->speedSlider->setValue(qMax(1, ui->speedSlider->value() - 5));
+    } else {
+        QMainWindow::keyPressEvent(event);
     }
 }
