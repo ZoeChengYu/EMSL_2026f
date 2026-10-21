@@ -155,6 +155,17 @@ int MainWindow::GetDelay() {
 void MainWindow::onTimerTimeout() {
     if (actionState == Action::SWITCHING) {
         if (switchingPhase == 0) {
+            if (rep <= 0) {
+                timer->stop();
+                actionState = Action::OFF;
+                for (int i = 0; i < 4; ++i) {
+                    lights[i] = false;
+                }
+                UpdateLights();
+                SyncCheckboxes();
+                return;
+            }
+
             lights[0] = true;
             lights[1] = true;
             lights[2] = false;
@@ -171,16 +182,6 @@ void MainWindow::onTimerTimeout() {
             SyncCheckboxes();
             switchingPhase = 0;
             rep--;
-
-            if (rep <= 0) {
-                timer->stop();
-                actionState = Action::OFF;
-                for (int i = 0; i < 4; ++i) {
-                    lights[i] = false;
-                }
-                UpdateLights();
-                SyncCheckboxes();
-            }
         }
     } else if (actionState == Action::RUNNING) {
         if (direction) {
