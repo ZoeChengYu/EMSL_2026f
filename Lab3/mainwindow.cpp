@@ -1,5 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include <QApplication>
+#include <QShortcut>
+#include <QLineEdit>
 
 #ifdef __linux__
 #include <fcntl.h>
@@ -28,6 +31,21 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     connect(timer, &QTimer::timeout, this, &MainWindow::onTimerTimeout);
+
+    // 全域安裝事件過濾器，確保鍵盤按鍵 1~4、S、O、F、R、X、D 在任何焦點下都能即時觸發
+    qApp->installEventFilter(this);
+
+    // 同步配置全域 QShortcut (ApplicationShortcut 級別) 作為雙重保障
+    new QShortcut(QKeySequence(Qt::Key_1), this, [this]() { ui->ledCheck0->toggle(); }, nullptr, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_2), this, [this]() { ui->ledCheck1->toggle(); }, nullptr, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_3), this, [this]() { ui->ledCheck2->toggle(); }, nullptr, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_4), this, [this]() { ui->ledCheck3->toggle(); }, nullptr, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_S), this, [this]() { ui->ledShiningBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_O), this, [this]() { ui->switchingOnBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_F), this, [this]() { ui->switchingOffBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_R), this, [this]() { ui->runningOnBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_X), this, [this]() { ui->runningOffBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_D), this, [this]() { ui->changeDirBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
 
     setupGpio();
     UpdateLights();
@@ -182,7 +200,10 @@ void MainWindow::onTimerTimeout() {
 
 void MainWindow::on_ledShiningBtn_clicked()
 {
-    if (actionState != Action::OFF) { return; }
+    if (timer->isActive()) {
+        timer->stop();
+    }
+    actionState = Action::OFF;
     lights[0] = ui->ledCheck0->isChecked();
     lights[1] = ui->ledCheck1->isChecked();
     lights[2] = ui->ledCheck2->isChecked();
@@ -196,8 +217,8 @@ void MainWindow::on_switchingOnBtn_clicked()
     actionState = Action::SWITCHING;
     rep = ui->switchingRep->value();
     if (rep <= 0) {
-        rep = 1;
-        ui->switchingRep->setValue(1);
+        rep = 5;
+        ui->switchingRep->setValue(5);
     }
 
     lights[0] = true;
@@ -213,8 +234,9 @@ void MainWindow::on_switchingOnBtn_clicked()
 
 void MainWindow::on_switchingOffBtn_clicked()
 {
-    if (actionState != Action::SWITCHING) { return; }
-    timer->stop();
+    if (timer->isActive()) {
+        timer->stop();
+    }
     actionState = Action::OFF;
     for (int i = 0; i < 4; i++) {
         lights[i] = false;
@@ -239,8 +261,9 @@ void MainWindow::on_runningOnBtn_clicked()
 
 void MainWindow::on_runningOffBtn_clicked()
 {
-    if (actionState != Action::RUNNING) { return; }
-    timer->stop();
+    if (timer->isActive()) {
+        timer->stop();
+    }
     actionState = Action::OFF;
     for (int i = 0; i < 4; i++) {
         lights[i] = false;
@@ -270,18 +293,142 @@ void MainWindow::on_speedSpinBox_valueChanged(int value)
     }
 }
 
-// 支援鍵盤快捷鍵調整 Switching Speed (例如: +, -, Up, Down, W, Q 等按鍵)
+// 全域事件過濾器：確保 1~4、S、O、F、R、X、D 在任何焦點下都能 100% 觸發
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (!keyEvent->isAutoRepeat()) {
+            bool isLineEdit = obj && obj->inherits("QLineEdit");
+            int key = keyEvent->key();
+
+            // 1. 可任意選取 LED1 至 LED4 (按鍵 1、2、3、4 切換核取狀態)
+            if (key == Qt::Key_1 && !isLineEdit) {
+                ui->ledCheck0->toggle();
+                return true;
+            } else if (key == Qt::Key_2 && !isLineEdit) {
+                ui->ledCheck1->toggle();
+                return true;
+            } else if (key == Qt::Key_3 && !isLineEdit) {
+                ui->ledCheck2->toggle();
+                return true;
+            } else if (key == Qt::Key_4 && !isLineEdit) {
+                ui->ledCheck3->toggle();
+                return true;
+            }
+            // 2. LED Shining (燈亮) (按鍵 S)
+            else if (key == Qt::Key_S && !isLineEdit) {
+                ui->ledShiningBtn->animateClick();
+                return true;
+            }
+            // 4. Switching on (LED閃爍) (按鍵 O)
+            else if (key == Qt::Key_O && !isLineEdit) {
+                ui->switchingOnBtn->animateClick();
+                return true;
+            }
+            // 5. Switching off (LED熄滅) (按鍵 F)
+            else if (key == Qt::Key_F && !isLineEdit) {
+                ui->switchingOffBtn->animateClick();
+                return true;
+            }
+            // 6. Running Light on (LED流水燈) (按鍵 R)
+            else if (key == Qt::Key_R && !isLineEdit) {
+                ui->runningOnBtn->animateClick();
+                return true;
+            }
+            // 7. Running Light off (LED熄滅) (按鍵 X)
+            else if (key == Qt::Key_X && !isLineEdit) {
+                ui->runningOffBtn->animateClick();
+                return true;
+            }
+            // 8. Change Direction (LED方向) (按鍵 D)
+            else if (key == Qt::Key_D && !isLineEdit) {
+                ui->changeDirBtn->animateClick();
+                return true;
+            }
+            // Switching Speed (控制閃爍速度) (按鍵 +, -, Up, Down, W, Q)
+            else if (key == Qt::Key_Plus || key == Qt::Key_Equal || key == Qt::Key_Up) {
+                ui->speedSlider->setValue(qMin(100, ui->speedSlider->value() + 5));
+                return true;
+            } else if (key == Qt::Key_Minus || key == Qt::Key_Underscore || key == Qt::Key_Down) {
+                ui->speedSlider->setValue(qMax(1, ui->speedSlider->value() - 5));
+                return true;
+            } else if (key == Qt::Key_W && !isLineEdit) {
+                ui->speedSlider->setValue(qMin(100, ui->speedSlider->value() + 5));
+                return true;
+            } else if (key == Qt::Key_Q && !isLineEdit) {
+                ui->speedSlider->setValue(qMax(1, ui->speedSlider->value() - 5));
+                return true;
+            }
+        }
+    }
+    return QMainWindow::eventFilter(obj, event);
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Plus || event->key() == Qt::Key_Equal || event->key() == Qt::Key_Up) {
-        ui->speedSlider->setValue(qMin(100, ui->speedSlider->value() + 5));
-    } else if (event->key() == Qt::Key_Minus || event->key() == Qt::Key_Underscore || event->key() == Qt::Key_Down) {
-        ui->speedSlider->setValue(qMax(1, ui->speedSlider->value() - 5));
-    } else if (event->key() == Qt::Key_W) {
-        ui->speedSlider->setValue(qMin(100, ui->speedSlider->value() + 5));
-    } else if (event->key() == Qt::Key_Q) {
-        ui->speedSlider->setValue(qMax(1, ui->speedSlider->value() - 5));
-    } else {
+    if (event->isAutoRepeat()) {
         QMainWindow::keyPressEvent(event);
+        return;
+    }
+
+    switch (event->key()) {
+    case Qt::Key_1:
+        ui->ledCheck0->toggle();
+        event->accept();
+        return;
+    case Qt::Key_2:
+        ui->ledCheck1->toggle();
+        event->accept();
+        return;
+    case Qt::Key_3:
+        ui->ledCheck2->toggle();
+        event->accept();
+        return;
+    case Qt::Key_4:
+        ui->ledCheck3->toggle();
+        event->accept();
+        return;
+    case Qt::Key_S:
+        ui->ledShiningBtn->animateClick();
+        event->accept();
+        return;
+    case Qt::Key_O:
+        ui->switchingOnBtn->animateClick();
+        event->accept();
+        return;
+    case Qt::Key_F:
+        ui->switchingOffBtn->animateClick();
+        event->accept();
+        return;
+    case Qt::Key_R:
+        ui->runningOnBtn->animateClick();
+        event->accept();
+        return;
+    case Qt::Key_X:
+        ui->runningOffBtn->animateClick();
+        event->accept();
+        return;
+    case Qt::Key_D:
+        ui->changeDirBtn->animateClick();
+        event->accept();
+        return;
+    case Qt::Key_Plus:
+    case Qt::Key_Equal:
+    case Qt::Key_Up:
+    case Qt::Key_W:
+        ui->speedSlider->setValue(qMin(100, ui->speedSlider->value() + 5));
+        event->accept();
+        return;
+    case Qt::Key_Minus:
+    case Qt::Key_Underscore:
+    case Qt::Key_Down:
+    case Qt::Key_Q:
+        ui->speedSlider->setValue(qMax(1, ui->speedSlider->value() - 5));
+        event->accept();
+        return;
+    default:
+        QMainWindow::keyPressEvent(event);
+        break;
     }
 }
