@@ -36,16 +36,16 @@ MainWindow::MainWindow(QWidget *parent)
     qApp->installEventFilter(this);
 
     // 同步配置全域 QShortcut (ApplicationShortcut 級別) 作為雙重保障
-    new QShortcut(QKeySequence(Qt::Key_1), this, [this]() { ui->ledCheck0->toggle(); }, nullptr, Qt::ApplicationShortcut);
-    new QShortcut(QKeySequence(Qt::Key_2), this, [this]() { ui->ledCheck1->toggle(); }, nullptr, Qt::ApplicationShortcut);
-    new QShortcut(QKeySequence(Qt::Key_3), this, [this]() { ui->ledCheck2->toggle(); }, nullptr, Qt::ApplicationShortcut);
-    new QShortcut(QKeySequence(Qt::Key_4), this, [this]() { ui->ledCheck3->toggle(); }, nullptr, Qt::ApplicationShortcut);
-    new QShortcut(QKeySequence(Qt::Key_S), this, [this]() { ui->ledShiningBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
-    new QShortcut(QKeySequence(Qt::Key_O), this, [this]() { ui->switchingOnBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
-    new QShortcut(QKeySequence(Qt::Key_F), this, [this]() { ui->switchingOffBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
-    new QShortcut(QKeySequence(Qt::Key_R), this, [this]() { ui->runningOnBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
-    new QShortcut(QKeySequence(Qt::Key_X), this, [this]() { ui->runningOffBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
-    new QShortcut(QKeySequence(Qt::Key_D), this, [this]() { ui->changeDirBtn->animateClick(); }, nullptr, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_1), this, [this]() { ui->ledCheck0->toggle(); }, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_2), this, [this]() { ui->ledCheck1->toggle(); }, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_3), this, [this]() { ui->ledCheck2->toggle(); }, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_4), this, [this]() { ui->ledCheck3->toggle(); }, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_S), this, [this]() { ui->ledShiningBtn->animateClick(); }, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_O), this, [this]() { ui->switchingOnBtn->animateClick(); }, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_F), this, [this]() { ui->switchingOffBtn->animateClick(); }, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_R), this, [this]() { ui->runningOnBtn->animateClick(); }, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_X), this, [this]() { ui->runningOffBtn->animateClick(); }, Qt::ApplicationShortcut);
+    new QShortcut(QKeySequence(Qt::Key_D), this, [this]() { ui->changeDirBtn->animateClick(); }, Qt::ApplicationShortcut);
 
     setupGpio();
     UpdateLights();
