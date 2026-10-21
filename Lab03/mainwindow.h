@@ -51,5 +51,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    void setupGpio();
+    void setGpio(int pin, int value);
+    void cleanupGpio();
 };
 #endif // MAINWINDOW_H

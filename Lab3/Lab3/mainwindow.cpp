@@ -1,11 +1,14 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include <QFile>
 
 #ifdef __linux__
+#include <fcntl.h>
 #include <unistd.h>
+#include <cstdio>
+#include <cstring>
 #endif
 
+// Jetson TX2 GPIO pin numbers (refer to Lab2 demo2.c: int gpio[6] = {466, 392, 397, 255, 296, 481};)
 static const int gpio_pins[4] = {466, 392, 397, 255};
 
 MainWindow::MainWindow(QWidget *parent)
@@ -40,47 +43,68 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// 參考 Lab2 demo2.c 中的 setup_gpio()
 void MainWindow::setupGpio() {
 #ifdef __linux__
+    char path[128];
     for (int i = 0; i < 4; ++i) {
-        QFile expFile("/sys/class/gpio/export");
-        if (expFile.open(QIODevice::WriteOnly)) {
-            QByteArray pinStr = QByteArray::number(gpio_pins[i]);
-            expFile.write(pinStr);
-            expFile.close();
+        // 1. Export GPIO
+        int fp = open("/sys/class/gpio/export", O_WRONLY);
+        if (fp >= 0) {
+            snprintf(path, sizeof(path), "%d", gpio_pins[i]);
+            write(fp, path, strlen(path));
+            close(fp);
+        } else {
+            perror("Failed to open GPIO export");
         }
+
+        // 等待 GPIO 節點建立 (demo2.c: usleep)
         usleep(50000);
 
-        QString dirPath = QString("/sys/class/gpio/gpio%1/direction").arg(gpio_pins[i]);
-        QFile dirFile(dirPath);
-        if (dirFile.open(QIODevice::WriteOnly)) {
-            dirFile.write("out");
-            dirFile.close();
+        // 2. 設定成輸出方向
+        snprintf(path, sizeof(path), "/sys/class/gpio/gpio%d/direction", gpio_pins[i]);
+        fp = open(path, O_WRONLY);
+        if (fp >= 0) {
+            write(fp, "out", 3);
+            close(fp);
+        } else {
+            perror("Failed to set GPIO direction");
         }
     }
 #endif
 }
 
+// 參考 Lab2 demo2.c 中的 gpio_control(int pin, int value)
 void MainWindow::setGpio(int pinIdx, int val) {
     if (pinIdx < 0 || pinIdx >= 4) return;
 #ifdef __linux__
-    QString valPath = QString("/sys/class/gpio/gpio%1/value").arg(gpio_pins[pinIdx]);
-    QFile valFile(valPath);
-    if (valFile.open(QIODevice::WriteOnly)) {
-        valFile.write(val ? "1" : "0");
-        valFile.close();
+    char path[128];
+    snprintf(path, sizeof(path), "/sys/class/gpio/gpio%d/value", gpio_pins[pinIdx]);
+    int fp = open(path, O_WRONLY);
+    if (fp >= 0) {
+        if (val == 0) {
+            write(fp, "0", 1);
+        } else {
+            write(fp, "1", 1);
+        }
+        close(fp);
     }
+#else
+    Q_UNUSED(val);
 #endif
 }
 
+// 程式結束或清理時將各腳位熄滅並釋放 (unexport)
 void MainWindow::cleanupGpio() {
 #ifdef __linux__
+    char path[128];
     for (int i = 0; i < 4; ++i) {
         setGpio(i, 0);
-        QFile unexpFile("/sys/class/gpio/unexport");
-        if (unexpFile.open(QIODevice::WriteOnly)) {
-            unexpFile.write(QByteArray::number(gpio_pins[i]));
-            unexpFile.close();
+        int fp = open("/sys/class/gpio/unexport", O_WRONLY);
+        if (fp >= 0) {
+            snprintf(path, sizeof(path), "%d", gpio_pins[i]);
+            write(fp, path, strlen(path));
+            close(fp);
         }
     }
 #endif

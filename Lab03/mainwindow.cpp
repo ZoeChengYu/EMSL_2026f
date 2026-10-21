@@ -3,6 +3,16 @@
 #include <QTimer>
 #include <QEventLoop>
 
+#ifdef __linux__
+#include <fcntl.h>
+#include <unistd.h>
+#include <cstdio>
+#include <cstring>
+#endif
+
+// Jetson TX2 GPIO pin numbers (refer to Lab2 demo2.c)
+static const int gpio_pins[4] = {466, 392, 397, 255};
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -15,11 +25,79 @@ MainWindow::MainWindow(QWidget *parent)
     runningState = 0;
     direction = false;
     for (int i=0; i<4; i++) {lights[i] = false;}
+
+    setupGpio();
+    UpdateLights();
 }
 
 MainWindow::~MainWindow()
 {
+    cleanupGpio();
     delete ui;
+}
+
+void MainWindow::setupGpio() {
+#ifdef __linux__
+    char path[128];
+    for (int i = 0; i < 4; ++i) {
+        // 1. Export GPIO
+        int fp = open("/sys/class/gpio/export", O_WRONLY);
+        if (fp >= 0) {
+            snprintf(path, sizeof(path), "%d", gpio_pins[i]);
+            write(fp, path, strlen(path));
+            close(fp);
+        } else {
+            perror("Failed to open GPIO export");
+        }
+
+        // 等待 GPIO 節點建立
+        usleep(50000);
+
+        // 2. 設定成輸出
+        snprintf(path, sizeof(path), "/sys/class/gpio/gpio%d/direction", gpio_pins[i]);
+        fp = open(path, O_WRONLY);
+        if (fp >= 0) {
+            write(fp, "out", 3);
+            close(fp);
+        } else {
+            perror("Failed to set GPIO direction");
+        }
+    }
+#endif
+}
+
+void MainWindow::setGpio(int pin, int value) {
+    if (pin < 0 || pin >= 4) return;
+#ifdef __linux__
+    char path[128];
+    snprintf(path, sizeof(path), "/sys/class/gpio/gpio%d/value", gpio_pins[pin]);
+    int fp = open(path, O_WRONLY);
+    if (fp >= 0) {
+        if (value == 0) {
+            write(fp, "0", 1);
+        } else {
+            write(fp, "1", 1);
+        }
+        close(fp);
+    }
+#else
+    Q_UNUSED(value);
+#endif
+}
+
+void MainWindow::cleanupGpio() {
+#ifdef __linux__
+    char path[128];
+    for (int i = 0; i < 4; ++i) {
+        setGpio(i, 0);
+        int fp = open("/sys/class/gpio/unexport", O_WRONLY);
+        if (fp >= 0) {
+            snprintf(path, sizeof(path), "%d", gpio_pins[i]);
+            write(fp, path, strlen(path));
+            close(fp);
+        }
+    }
+#endif
 }
 
 void MainWindow::SyncCheckboxes() {
@@ -34,6 +112,10 @@ void MainWindow::UpdateLights() {
     ui->ledLabel1->setHidden(!lights[1]);
     ui->ledLabel2->setHidden(!lights[2]);
     ui->ledLabel3->setHidden(!lights[3]);
+
+    for (int i = 0; i < 4; ++i) {
+        setGpio(i, lights[i] ? 1 : 0);
+    }
 }
 
 int MainWindow::GetDelay() {
