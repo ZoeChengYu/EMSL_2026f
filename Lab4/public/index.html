@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Nodejs</title>
+</head>
+<body>
+  <h1>Nodejs</h1>
+  <hr>
+
+  <h2>LED Control Panel</h2>
+  <div>
+    <label><input type="checkbox" name="led" value="1"> LED1</label>
+    <label><input type="checkbox" name="led" value="2"> LED2</label><br>
+    <label><input type="checkbox" name="led" value="3"> LED3</label>
+    <label><input type="checkbox" name="led" value="4"> LED4</label><br>
+    <label><input type="radio" name="power" value="1" checked> ON</label>
+    <label><input type="radio" name="power" value="0"> OFF</label>
+  </div>
+  <p><button id="submit">Submit</button></p>
+  <div id="ledStatus"></div>
+  <hr>
+
+  <h2>LED Switch Frequency</h2>
+  <input type="number" id="times" min="1">
+  <br>
+  <button id="shine">Mode_Shine</button>
+  <p id="shineStatus"></p>
+  <hr>
+
+  <h2>Running Light</h2>
+  <button id="runOn">Running Light on</button>
+  <button id="runOff">Running Light off</button>
+  <button id="runRev">Change Direction</button>
+  <p id="runStatus"></p>
+
+  <script>
+    // Every button calls the backend with fetch, so the page never reloads
+    // and the result is shown on the same screen.
+    async function call(url, target, asHtml) {
+      try {
+        const text = await (await fetch(url)).text();
+        document.getElementById(target)[asHtml ? "innerHTML" : "textContent"] = text;
+      } catch (e) {
+        document.getElementById(target).textContent = "Request failed";
+      }
+    }
+
+    document.getElementById("submit").onclick = () => {
+      const leds = [...document.querySelectorAll('input[name="led"]:checked')].map(c => c.value);
+      const power = document.querySelector('input[name="power"]:checked').value;
+      call(`/index?LED=${leds.join(",")}&POWER=${power}`, "ledStatus", true);
+    };
+    document.getElementById("shine").onclick = () => {
+      const t = document.getElementById("times").value;
+      call(`/shine?times=${encodeURIComponent(t)}`, "shineStatus");
+    };
+    document.getElementById("runOn").onclick  = () => call("/running/on", "runStatus");
+    document.getElementById("runOff").onclick = () => call("/running/off", "runStatus");
+    document.getElementById("runRev").onclick = () => call("/running/reverse", "runStatus");
+  </script>
+</body>
+</html>
