@@ -1,0 +1,9 @@
+# Python dependencies for Lab 5
+# On NVIDIA Jetson TX2:
+# Jetson.GPIO is typically pre-installed with JetPack.
+# OpenCV with GStreamer support is pre-installed in L4T.
+# If installing manually:
+# pip3 install Jetson.GPIO opencv-python numpy
+Jetson.GPIO>=2.0.0; sys_platform == 'linux'
+opencv-python>=4.5.0
+numpy>=1.20.0
