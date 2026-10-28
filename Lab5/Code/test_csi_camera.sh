@@ -16,7 +16,9 @@ echo "  正在嘗試透過 GStreamer 開啟主流 nvarguscamerasrc..."
 echo "========================================================"
 
 # 主流新版指令 (L4T 32.x / JetPack 4.x+ 適用)
-gst-launch-1.0 nvarguscamerasrc ! nvvidconv ! xvimagesink
+gst-launch-1.0 nvarguscamerasrc num-buffers=1 ! \
+  'video/x-raw(memory:NVMM),width=1920,height=1080' ! \
+  nvjpegenc ! filesink location=photo.jpg
 
 # 若上述指令回報錯誤或無畫面，請嘗試舊版 nvcamerasrc 指令 (解除下方註解)：
 # echo "嘗試舊版 nvcamerasrc 管線..."

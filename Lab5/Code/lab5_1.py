@@ -174,7 +174,7 @@ def main():
                 led2_on = False  # 可設定 LED1 亮、LED2 暗，或依門檻階梯點亮
             else:
                 led1_on = False
-                led2_on = False
+                led2_on = True
 
             set_leds(led1_pin, led2_pin, led1_on, led2_on)
 
