@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Users/ChengYu/Desktop/MSLA_2026/EMSL_2026f/Lab03"
+    "cmake.sourceDirectory": "C:/Users/ChengYu/Desktop/MSLA_2026/EMSL_2026f/Lab03",
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }
