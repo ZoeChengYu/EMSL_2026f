@@ -1,4 +1,3 @@
-
 obj-m := demo.o
 
 KDIR := /lib/modules/$(shell uname -r)/build
