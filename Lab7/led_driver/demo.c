@@ -6,10 +6,10 @@
  * 以及 read() 讀回指定 LED 狀態。
  *
  * GPIO 對應：
- *   LED1 -> GPIO 396
- *   LED2 -> GPIO 255
- *   LED3 -> GPIO 296
- *   LED4 -> GPIO 298
+ *   LED1 -> GPIO 254 (J21 Pin 22)
+ *   LED2 -> GPIO 398 (J21 Pin 29)
+ *   LED3 -> GPIO 389 (J21 Pin 33)
+ *   LED4 -> GPIO 388 (J21 Pin 37)
  *
  * 環境：Jetson TX2 / Linux 4.9 L4T
  */
@@ -39,7 +39,7 @@ struct demo_private {
 };
 
 /* LED GPIO numbers as used on TX2 40-pin header */
-static const int led_gpios[NUM_LEDS] = { 396, 255, 296, 298 };
+static const int led_gpios[NUM_LEDS] = { 254, 398, 389, 388 };
 static const char *led_names[NUM_LEDS] = { "LED1", "LED2", "LED3", "LED4" };
 
 static int major;                       /* dynamic major number          */
